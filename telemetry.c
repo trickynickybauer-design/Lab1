@@ -13,27 +13,45 @@
 
 uint32_t pack_telemetry(uint32_t sys_id, uint32_t flags, uint32_t voltage, int32_t temp) {
     /* TODO: Implement your bitwise packing code here */
-    return 0;
+    uint32_t var;
+    var = (sys_id & 0xF) << 28 | (flags & 0x3F) << 22 | (voltage & 0X3FF) << 12 | ((uint32_t)temp & 0xFFF);
+    return var;
 }
 
 int32_t unpack_temperature(uint32_t packet) {
     /* TODO: Extract 12-bit signed temp and properly sign-extend it to 32-bit */
-    return 0;
+    uint32_t mask = 0xFFF;
+
+    int32_t var = ((int32_t)(packet & mask) << 20) >> 20;
+
+    return var;
 }
 
 uint32_t unpack_voltage(uint32_t packet) {
     /* TODO: Extract 10-bit unsigned battery voltage */
-    return 0;
+    uint32_t mask = 0x3FF << 12;
+
+    uint32_t var = (packet & mask) >> 12;
+
+    return var;
 }
 
 uint32_t unpack_flags(uint32_t packet) {
     /* TODO: Extract 6-bit error flags */
-    return 0;
+    uint32_t mask = 0x3F << 22;
+
+    uint32_t var = (packet & mask) >> 22;
+
+    return var;
 }
 
 uint32_t unpack_sys_id(uint32_t packet) {
     /* TODO: Extract 4-bit sub-system ID */
-    return 0;
+    uint32_t mask = 0xF << 28;
+
+    uint32_t var = (packet & mask) >> 28;
+
+    return var;
 }
 
 
@@ -50,7 +68,7 @@ int main() {
     uint32_t packed_packet = pack_telemetry(sys_id, flags, voltage, temp);
     
     printf("--- Encoding Telemetry Packet ---\n");
-    printf("Expected Pack hex: 0xBABC5E00\n");
+    printf("Expected Pack hex: 0xBAB55E00\n");
     printf("Actual Pack hex:   0x%08X\n\n", packed_packet);
 
     printf("--- Decoding Telemetry Packet ---\n");
